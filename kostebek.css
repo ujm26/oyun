@@ -1,44 +1,61 @@
-body{
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
-    background: url("./menu2.png");
-    background-size: cover;
-}
-
-
-#board{
-    width: 540px;
-    height: 540px;
-    background-color: aqua;
-
-    margin: 0 auto;
+body {
+    margin: 0;
+    padding: 0;
     display: flex;
-    flex-wrap: wrap;
-
-    background: url();
-    background-size: cover;
-    border: 3px solid white;
-    border-radius: 25px;
-
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
 }
 
-
-#board div{
-    width: 180px;
-    height: 180px;
-    background-image: url("./DENEME.png");
-    background-size: cover;
+#game-container {
+    width: 414px;
+    height: 896px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-#board div img{
+#timer {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#score {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 10px;
+    margin: 0 auto;
+}
+
+#board div {
     width: 100px;
     height: 100px;
+    background-color: lightgray;
+    position: relative;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-drag: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-
+img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
 }
