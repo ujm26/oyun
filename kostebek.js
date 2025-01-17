@@ -1,137 +1,82 @@
-let suankiKostebekkonum;
-let suankidDusmankonum;
-let score = 0;
-let gameOver = false;
-let timer = 45;
-let isCooldown = false; // Tıklama kontrol bayrağı
-let kostebekClickable = true; // Kostebeğin tıklanabilirliğini kontrol eden bayrak
-
-
-window.onload = function () {
-    setGame();
-    startTimer();
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    background: url("./menu2.jpg");
+    background-size: cover;
+    margin: 0;
+    padding: 0;
 }
 
-function setGame() {
-    for (let i = 0; i < 9; i++) {
-        let tile = document.createElement("div");
-        tile.id = i.toString();
-        tile.addEventListener("click", selectTile);
-        document.getElementById("board").appendChild(tile);
-    }
+#board {
+    width: 414px;
+    height: 896px;
+    margin: 150px auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 sütun düzeni */
+    grid-template-rows: repeat(3, 1fr); /* 3 satır düzeni */
+    gap: 0px; /* Hücreler arasında boşluk */
+    background-size: cover; 
+    border-radius: 25px;
+    position: relative; /* İçerideki elemanların düzgün yerleşmesi için */
 }
 
-setInterval(setKostebek, 1000);
-setInterval(setDusman, 2000);
-
-function getRandomTile() {
-    let num = Math.floor(Math.random() * 9);
-    return num.toString();
+#board div {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("./gif.gif");
+    background-size: cover;
+    border-radius: 0px; /* Köşeleri yuvarlatmak için */
+    position: relative; /* İçindeki köstebek ve düşmanı yerleştirmek için */
 }
 
-function setKostebek() {
-    if (gameOver) {
-        return;
-    }
-    if (suankiKostebekkonum) {
-        suankiKostebekkonum.innerHTML = "";
-    }
-
-    let kostebek = document.createElement("img");
-    kostebek.src = "./zaza.jpeg";
-
-    let num = getRandomTile();
-    if (suankidDusmankonum && suankidDusmankonum.id == num) {
-        return;
-    }
-    suankiKostebekkonum = document.getElementById(num);
-    suankiKostebekkonum.appendChild(kostebek);
-
-    // Köstebeği tıklanabilir hale getir
-    if (kostebekClickable) {
-        suankiKostebekkonum.style.pointerEvents = "auto"; // Tıklanabilir hale getir
-    }
+#board div img {
+    width: 100px;
+    height: 100px;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
-function setDusman() {
-    if (gameOver) {
-        return;
+/* Mobil cihazlar için medya sorgusu */
+@media (max-width: 768px) {
+    #board {
+        width: 100%;
+        max-width: none; /* Mobilde tam genişlik */
+        height: auto; /* Yüksekliği otomatik yap */
     }
 
-    if (suankidDusmankonum) {
-        suankidDusmankonum.innerHTML = "";
+    #board div {
+        width: 100%; /* 2 sütun düzeni */
+        height: 100%; /* her kutu daha küçük olacak */
     }
 
-    let dusman = document.createElement("img");
-    dusman.src = "./gorsel.png";
-
-    let num = getRandomTile();
-    if (suankiKostebekkonum && suankiKostebekkonum.id == num) {
-        return;
-    }
-    suankidDusmankonum = document.getElementById(num);
-    suankidDusmankonum.appendChild(dusman);
-}
-
-function selectTile() {
-    if (gameOver) {
-        return;
-    }
-    if (this == suankiKostebekkonum && kostebekClickable) {
-        score += 10;
-        document.getElementById("score").innerText = score.toString();
-
-        // Köstebeği tıklanamaz hale getir
-        kostebekClickable = false;
-        suankiKostebekkonum.style.pointerEvents = "none";
-
-        // Köstebeğin başka bir yere geçtiğinde tıklanabilir hale getir
-        setTimeout(() => {
-            kostebekClickable = true;
-            if (suankiKostebekkonum) {
-                suankiKostebekkonum.style.pointerEvents = "auto";
-            }
-        }, 800); // 0.8 saniye sonra köstebeği tıklanabilir hale getir
-        sendScoreToBot(score);
-    }
-    else if (this == suankidDusmankonum) {
-        document.getElementById("score").innerText = "Game Over: " + score.toString();
-        gameOver = true;
-        sendScoreToBot(score);
+    #board div img {
+        width: 100%; /* Görseller daha küçük olacak */
+        height: 100%;
     }
 }
 
-function startTimer() {
-    const timerElement = document.getElementById("timer");
+/* Çok küçük ekranlar için (telefonlar) */
+@media (max-width: 480px) {
+    #board div {
+        width: 100%; /* 1 sütun düzeni */
+        height: 100%; /* her kutu tam ekran */
+    }
 
-    let timerInterval = setInterval(function () {
-        if (gameOver || timer <= 0) {
-            clearInterval(timerInterval); // Zamanlayıcıyı durdur
-            document.getElementById("score").innerText = "Game Over: " + score.toString();
-            gameOver = true;
-        } else {
-            timer--;
-            document.getElementById("timer").innerText = "Kalan süre: " + timer.toString();
-        }
-    }, 1000); // Her saniyede bir çalışacak
+    #board div img {
+        width: 100%; /* Görseller daha da küçük olacak */
+        height: 100%;
+    }
 }
 
-function sendScoreToBot(score) {
-    // Gerçek kullanıcı ID'sini buradan almanız gerekebilir
-    let userId = user_id; // Bu kısmı değiştirebilirsiniz
-
-    fetch("http://localhost:5000/api/save_score", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: userId, score: score })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Score saved to database:", data);
-    })
-    .catch(error => {
-        console.error("Error saving score:", error);
-    });
+/* Timer ve skor için stil */
+#timer, #score {
+    font-size: 20px;
+    margin-top: 10px;
+    color: white;
+    font-weight: bold;
 }
+    
